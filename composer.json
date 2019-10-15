@@ -1,0 +1,31 @@
+{
+  "name": "novembit/i18n-hub",
+  "description": "i18n rest api hub.",
+  "keywords": [
+    "i18n",
+    "multilingual"
+  ],
+  "license": [
+    "GPL-3.0-or-later"
+  ],
+  "type": "project",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=7.0",
+    "novembit/i18n": "dev-master"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "hub\\": "src/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ]
+}

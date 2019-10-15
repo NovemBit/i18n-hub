@@ -66,41 +66,10 @@ return [
         'class' => Languages::class,
         'accept_languages' => ['ar', 'hy', 'fr', 'it', 'de', 'ru', 'en'],
         'from_language' => 'en',
-        'default_language' => [
-            'swanson.fr' => 'fr',
-            'swanson.am' => 'hy',
-            'swanson.it' => 'it',
-            'swanson.ru' => 'ru',
-            'swanson.co.uk' => 'en',
-            'default' => 'en'
-        ],
-        'path_exclusion_patterns' => [
-            '.*\.php',
-            '.*\.jpg',
-            '.*wp-admin',
-        ],
     ],
     'request' => [
         'class' => Request::class
     ],
-    'rest' => [
-        'class' => Rest::class,
-        'api_keys' => [
-            'demo_key_123'
-        ]
-    ],
-    'db' => [
-        'class' => DB::class,
-        'connection' => [
-            'dsn' => 'mysql:host=localhost;dbname=i18n',
-            'username' => 'i18n',
-            'password' => 'Novem9bit',
-            'charset' => 'utf8mb4',
-            'tablePrefix' => 'i18n_',
-            /*'enableQueryCache' => true,
-            'enableSchemaCache' => true,
-            'schemaCacheDuration' => 3000,
-            'schemaCache' => 'cache',*/
-        ],
-    ]
+    'rest' => require('rest.php'),
+    'db' => require ('db.php')
 ];

@@ -18,7 +18,6 @@
         ...
    ]
     ```
-   
 ## How to setup client
 
 Change your i18n module configuration Method component configuration.

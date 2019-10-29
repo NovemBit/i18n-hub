@@ -22,10 +22,14 @@
       "hub\\": "src/"
     }
   },
-  "repositories": [
-    {
+  "repositories": {
+    "asset-packagist":{
       "type": "composer",
       "url": "https://asset-packagist.org"
+    },
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.org"
     }
-  ]
+  }
 }

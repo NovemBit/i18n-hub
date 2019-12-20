@@ -1,0 +1,31 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+
+build:image:gitlab:
+  stage: build
+  only:
+    - master
+  environment:
+    name: gitlab-registry
+  image: docker:stable-dind
+  tags:
+    - docker
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker build . -t $IMAGE_ID
+    - docker push $IMAGE_ID
+
+deploy:image:gitlab:
+  stage: deploy
+  only:
+    - master
+  environment:
+    name: wordpress-i18n
+  image: bitnami/kubectl:latest
+  script:
+    - echo -n $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl -n i18n set image deployment i18n i18n=$IMAGE_ID

@@ -13,7 +13,8 @@ build:image:gitlab:
     name: gitlab-registry
   tags:
     - docker
-  image: docker:stable-dind
+  image:
+    name: docker:stable-dind
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build . -t $IMAGE_ID
@@ -27,7 +28,9 @@ deploy:image:gitlab:
     name: wordpress-i18n
   tags:
     - docker
-  image: bitnami/kubectl:latest
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
   script:
-    - echo -n $KUBE_CONFIG | base64 -d > $HOME/.kube/config
-    - kubectl -n i18n set image deployment i18n i18n=$IMAGE_ID
+    - echo -n $KUBE_CONFIG | base64 -d > /tmp/kube-config
+    - kubectl -n i18n set image deployment i18n i18n=$IMAGE_ID --kubeconfig=/tmp/kube-config

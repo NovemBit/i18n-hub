@@ -11,9 +11,9 @@ build:image:gitlab:
     - master
   environment:
     name: gitlab-registry
-  image: docker:stable-dind
   tags:
     - docker
+  image: docker:stable-dind
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build . -t $IMAGE_ID
@@ -25,6 +25,8 @@ deploy:image:gitlab:
     - master
   environment:
     name: wordpress-i18n
+  tags:
+    - docker
   image: bitnami/kubectl:latest
   script:
     - echo -n $KUBE_CONFIG | base64 -d > $HOME/.kube/config

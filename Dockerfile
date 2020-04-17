@@ -26,9 +26,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Not sure why this doesn't get created by the distro package above
-RUN mkdir /run/php
-
 # Set up nginx to serve the site
 COPY docker/nginx.conf /etc/nginx/sites-available/i18n.conf
 RUN rm -f /etc/nginx/sites-enabled/*default*

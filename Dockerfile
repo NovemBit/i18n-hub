@@ -1,4 +1,4 @@
-FROM ubuntu:disco
+FROM ubuntu:focal
 
 # Set terminal to be noninteractive
 ENV DEBIAN_FRONTEND noninteractive
@@ -16,12 +16,12 @@ RUN apt-get update && \
         ca-certificates \
         nginx \
         phpunit \
-        php7.2-cli \
-        php7.2-fpm \
-        php7.2-curl \
-        php7.2-json \
-        php7.2-mbstring \
-        php7.2-mysql \
+        php7.4-cli \
+        php7.4-fpm \
+        php7.4-curl \
+        php7.4-json \
+        php7.4-mbstring \
+        php7.4-mysql \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -53,7 +53,7 @@ RUN composer install
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Ensure PARAM* envvars are passed through PHP FPM, and it's listening on port 9000
-COPY docker/www.conf /etc/php/7.2/fpm/pool.d/www.conf
+COPY docker/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
 EXPOSE 80
 

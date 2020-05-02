@@ -2,6 +2,9 @@ stages:
   - build
   - deploy
 
+image:
+  name: docker:stable
+
 variables:
   IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
@@ -13,24 +16,26 @@ build:image:gitlab:
     name: gitlab-registry
   tags:
     - docker
-  image:
-    name: docker:stable-dind
+  before_script:
+    - mkdir -p /root/.docker
+    - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token
+    - vault kv get -field=dockerconfig cisecrets/dockerconfig | base64 -d >/root/.docker/config
   script:
+    - docker build --no-cache . -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+    - docker tag $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID $CI_REGISTRY_IMAGE:latest
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build . -t $IMAGE_ID
-    - docker push $IMAGE_ID
+    - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+    - docker push $CI_REGISTRY_IMAGE:latest
 
-deploy:image:gitlab:
+deploy:image:production:
   stage: deploy
   only:
     - master
-  environment:
-    name: wordpress-i18n
   tags:
     - docker
-  image:
-    name: bitnami/kubectl:latest
-    entrypoint: [""]
+  before_script:
+    - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token
+    - vault kv get -field=kubeconfig cisecrets/kubeconfig-wpcluster2 | base64 -d >/tmp/kubeconfig
   script:
-    - echo -n $KUBE_CONFIG | base64 -d > /tmp/kube-config
-    - kubectl -n i18n set image deployment i18n i18n=$IMAGE_ID --kubeconfig=/tmp/kube-config
+    - kubectl --kubeconfig=/tmp/kubeconfig -n i18n set image deployment i18n i18n=$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+

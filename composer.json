@@ -13,7 +13,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=7.2",
-    "rossigee/i18n": "dev-develop",
+    "novembit/i18n": "dev-develop",
     "lefuturiste/monolog-discord-handler": ">=0.3.1"
   },
   "require-dev": {
@@ -31,6 +31,10 @@
     "packagist": {
       "type": "composer",
       "url": "https://packagist.org"
+    },
+    "novembit/i18n": {
+      "type": "vcs",
+      "url": "https://github.com/rossigee/i18n"
     }
   }
 }

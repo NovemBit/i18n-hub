@@ -5,6 +5,9 @@ stages:
 image:
   name: docker:stable
 
+before_script:
+  - apk -q --no-progress add vault
+
 variables:
   IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 

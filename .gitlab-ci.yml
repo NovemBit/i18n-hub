@@ -7,6 +7,7 @@ image:
 
 before_script:
   - apk -q --no-progress add vault
+  - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token
 
 variables:
   IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
@@ -19,11 +20,9 @@ build:image:gitlab:
     name: gitlab-registry
   tags:
     - docker
-  before_script:
-    - mkdir -p /root/.docker
-    - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token
-    - vault kv get -field=dockerconfig cisecrets/dockerconfig | base64 -d >/root/.docker/config
   script:
+    - mkdir -p /root/.docker
+    - vault kv get -field=dockerconfig cisecrets/dockerconfig | base64 -d >/root/.docker/config
     - docker build --no-cache . -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
     - docker tag $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID $CI_REGISTRY_IMAGE:latest
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
@@ -36,9 +35,7 @@ deploy:image:production:
     - master
   tags:
     - docker
-  before_script:
-    - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token
-    - vault kv get -field=kubeconfig cisecrets/kubeconfig-wpcluster2 | base64 -d >/tmp/kubeconfig
   script:
+    - vault kv get -field=kubeconfig cisecrets/kubeconfig-wpcluster2 | base64 -d >/tmp/kubeconfig
     - kubectl --kubeconfig=/tmp/kubeconfig -n i18n set image deployment i18n i18n=$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 

@@ -36,6 +36,7 @@ deploy:image:production:
   tags:
     - docker
   script:
+    - wget -qO /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl && chmod 755 /usr/local/bin/kubectl
     - vault kv get -field=kubeconfig cisecrets/kubeconfig-wpcluster2 | base64 -d >/tmp/kubeconfig
     - kubectl --kubeconfig=/tmp/kubeconfig -n i18n set image deployment i18n i18n=$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 

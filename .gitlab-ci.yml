@@ -6,7 +6,7 @@ image: tetraweb/php
 
 before_script:
   - mkdir ~/.ssh
-  - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+  - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
   - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
   - apk -q --no-progress add vault
   - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token

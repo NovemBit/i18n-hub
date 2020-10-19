@@ -16,8 +16,8 @@ before_script:
  
   
   # - mkdir -p ~/.ssh
-  # - eval $(ssh-agent -s)
-  # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - eval $(ssh-agent -s)
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
 variables:
   IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID

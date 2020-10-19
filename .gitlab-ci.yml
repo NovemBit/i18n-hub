@@ -53,7 +53,7 @@ variables:
 deploy:cloudron:production:i18n:
   stage: deploy
   only:
-    - develop
+    - master
   environment:
     name: cloudron-production-i18n
     url: https://i18n2.brandlight.org

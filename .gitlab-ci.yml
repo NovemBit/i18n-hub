@@ -8,10 +8,10 @@ before_script:
   - mkdir ~/.ssh
   - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
   - apt-get update
-  - apt-get install software-properties-common
+  - apt-get install software-properties-common -y
   - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
   - apt-get update
-  - apt-get install zip unzip vault
+  - apt-get install zip unzip vault -y
   - apk -q --no-progress add vault
   - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token
   - vault kv get -field=id_rsa cisecrets/ssh | base64 -d >~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa

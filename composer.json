@@ -31,10 +31,6 @@
     "packagist": {
       "type": "composer",
       "url": "https://packagist.org"
-    },
-    "novembit/i18n": {
-      "type": "vcs",
-      "url": "https://github.com/rossigee/i18n"
     }
   }
 }

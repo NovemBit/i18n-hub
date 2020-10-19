@@ -59,7 +59,7 @@ stage_deploy:
     - composer install
     - zip -r artifact.zip *
     - scp -P22 -r artifact.zip root@my.brandlight.org:/home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public/artifact.zip
-
+    - ssh root@my.brandlight.org "cd /home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public/ && unzip artifact.zip && rm -rf artifact.zip && chown -R www-data:www-data * && exit"
 # # Deploy 'develop' branch to our 'waves' development host.
 # deploy:cloudron:production:i18n:
 #   stage: deploy

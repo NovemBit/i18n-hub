@@ -12,8 +12,8 @@ before_script:
   - vault kv get -field=id_rsa.pub cisecrets/ssh | base64 -d >~/.ssh/id_rsa.pub
   - vault kv get -field=known_hosts cisecrets/ssh | base64 -d >~/.ssh/known_hosts
 
-variables:
-  IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+# variables:
+#   IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 # build:image:gitlab:
 #   stage: build
 #   only:
@@ -57,7 +57,9 @@ stage_deploy:
   only:
     - master
   script:
-    - scp -P22 -r build/* deploy-bot@my.brandlight.org:home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public/
+    - composer install
+    - zip -r artifact.zip *
+    - scp -P22 -r artifact.zip deploy-bot@my.brandlight.org:home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public/
 
 # # Deploy 'develop' branch to our 'waves' development host.
 # deploy:cloudron:production:i18n:

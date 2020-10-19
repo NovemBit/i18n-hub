@@ -8,6 +8,9 @@ image:
 before_script:
   - apk -q --no-progress add vault
   - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token
+  - vault kv get -field=id_rsa cisecrets/ssh | base64 -d >~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa
+  - vault kv get -field=id_rsa.pub cisecrets/ssh | base64 -d >~/.ssh/id_rsa.pub
+  - vault kv get -field=known_hosts cisecrets/ssh | base64 -d >~/.ssh/known_hosts
 
 variables:
   IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
@@ -28,15 +31,34 @@ build:image:gitlab:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
     - docker push $CI_REGISTRY_IMAGE:latest
+  artifacts:
+    paths:
+      - artefacts/*.zip
 
-deploy:image:production:
-  stage: deploy
-  only:
-    - master
-  tags:
-    - docker
-  script:
-    - wget -qO /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl && chmod 755 /usr/local/bin/kubectl
-    - vault kv get -field=kubeconfig cisecrets/kubeconfig-wpcluster2 | base64 -d >/tmp/kubeconfig
-    - kubectl --kubeconfig=/tmp/kubeconfig -n i18n set image deployment i18n i18n=$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+# deploy:image:production:
+#   stage: deploy
+#   only:
+#     - master
+#   tags:
+#     - docker
+#   script:
+#     - wget -qO /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl && chmod 755 /usr/local/bin/kubectl
+#     - vault kv get -field=kubeconfig cisecrets/kubeconfig-wpcluster2 | base64 -d >/tmp/kubeconfig
+#     - kubectl --kubeconfig=/tmp/kubeconfig -n i18n set image deployment i18n i18n=$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+
+
+# # Deploy 'develop' branch to our 'waves' development host.
+# deploy:runcloud:development:waves:
+#   stage: deploy
+#   only:
+#     - develop
+#   environment:
+#     name: runcloud-development-waves
+#     url: https://dev.waves.agentdesign.co.uk
+#   variables:
+#     SSH_HOST: my.brandlight.org
+#     SSH_USER: www-data
+#     SSH_PATH: /home/waves/webapps/waves
+#   script:
+#     - deploy-wp-plugin -v
 

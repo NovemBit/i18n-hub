@@ -16,25 +16,26 @@ before_script:
 variables:
   IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
-build:image:gitlab:
-  stage: build
-  only:
-    - master
-  environment:
-    name: gitlab-registry
-  tags:
-    - docker
-  script:
-    - mkdir -p /root/.docker
-    - vault kv get -field=dockerconfig cisecrets/dockerconfig | base64 -d >/root/.docker/config
-    - docker build --no-cache . -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
-    - docker tag $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID $CI_REGISTRY_IMAGE:latest
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
-    - docker push $CI_REGISTRY_IMAGE:latest
-  artifacts:
-    paths:
-      - artefacts/*.zip
+# build:image:gitlab:
+#   stage: build
+#   only:
+#     - master
+#   environment:
+#     name: gitlab-registry
+#   tags:
+#     - docker
+#   script:
+#     - mkdir -p /root/.docker
+#     - vault kv get -field=dockerconfig cisecrets/dockerconfig | base64 -d >/root/.docker/config
+#     - docker build --no-cache . -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+#     - docker tag $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID $CI_REGISTRY_IMAGE:latest
+#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+#     - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+#     - docker push $CI_REGISTRY_IMAGE:latest
+#   artifacts:
+#     paths:
+#       - artefacts/*.zip
+
 
 # deploy:image:production:
 #   stage: deploy
@@ -48,18 +49,18 @@ build:image:gitlab:
 #     - kubectl --kubeconfig=/tmp/kubeconfig -n i18n set image deployment i18n i18n=$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
 
-# # Deploy 'develop' branch to our 'waves' development host.
-# deploy:runcloud:development:waves:
-#   stage: deploy
-#   only:
-#     - develop
-#   environment:
-#     name: runcloud-development-waves
-#     url: https://dev.waves.agentdesign.co.uk
-#   variables:
-#     SSH_HOST: my.brandlight.org
-#     SSH_USER: www-data
-#     SSH_PATH: /home/waves/webapps/waves
-#   script:
-#     - deploy-wp-plugin -v
+# Deploy 'develop' branch to our 'waves' development host.
+deploy:cloudron:production:i18n:
+  stage: deploy
+  only:
+    - develop
+  environment:
+    name: cloudron-production-i18n
+    url: https://i18n2.brandlight.org
+  variables:
+    SSH_HOST: my.brandlight.org
+    SSH_USER: www-data
+    SSH_PATH: /home/waves/webapps/waves
+  script:
+    - ssh www-data@my.brandlight.org "cd /home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public && git checkout master && git pull origin master && exit"
 

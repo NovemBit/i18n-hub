@@ -1,7 +1,3 @@
-# stages:
-#   #- build
-#   - deploy
-
 image: registry.gitlab.com/agentdesign/sysadmin/docker/docker-agentdesign-wordpress-ci
 
 before_script:
@@ -11,40 +7,6 @@ before_script:
   - vault kv get -field=id_rsa cisecrets/ssh | base64 -d >~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa
   - vault kv get -field=id_rsa.pub cisecrets/ssh | base64 -d >~/.ssh/id_rsa.pub
   - vault kv get -field=known_hosts cisecrets/ssh | base64 -d >~/.ssh/known_hosts
-
-# variables:
-#   IMAGE_ID: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
-# build:image:gitlab:
-#   stage: build
-#   only:
-#     - master
-#   environment:
-#     name: gitlab-registry
-#   tags:
-#     - docker
-#   script:
-#     - mkdir -p /root/.docker
-#     - vault kv get -field=dockerconfig cisecrets/dockerconfig | base64 -d >/root/.docker/config
-#     - docker build --no-cache . -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
-#     - docker tag $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID $CI_REGISTRY_IMAGE:latest
-#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-#     - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
-#     - docker push $CI_REGISTRY_IMAGE:latest
-#   artifacts:
-#     paths:
-#       - artefacts/*.zip
-
-
-# deploy:image:production:
-#   stage: deploy
-#   only:
-#     - master
-#   tags:
-#     - docker
-#   script:
-#     - wget -qO /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl && chmod 755 /usr/local/bin/kubectl
-#     - vault kv get -field=kubeconfig cisecrets/kubeconfig-wpcluster2 | base64 -d >/tmp/kubeconfig
-#     - kubectl --kubeconfig=/tmp/kubeconfig -n i18n set image deployment i18n i18n=$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
 stage_deploy:
   artifacts:
@@ -60,14 +22,3 @@ stage_deploy:
     - zip -r artifact.zip *
     - scp -P22 -r artifact.zip root@my.brandlight.org:/home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public/artifact.zip
     - ssh root@my.brandlight.org "cd /home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public/ && unzip artifact.zip && rm -rf artifact.zip && chown -R www-data:www-data * && exit"
-# # Deploy 'develop' branch to our 'waves' development host.
-# deploy:cloudron:production:i18n:
-#   stage: deploy
-#   only:
-#     - master
-#   environment:
-#     name: cloudron-production-i18n
-#     url: https://i18n2.brandlight.org
-#   script:
-#     - ssh deploy-bot@my.brandlight.org "cd /home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public && git checkout master && git pull origin master && exit"
-

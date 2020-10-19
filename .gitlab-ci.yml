@@ -57,10 +57,6 @@ deploy:cloudron:production:i18n:
   environment:
     name: cloudron-production-i18n
     url: https://i18n2.brandlight.org
-  variables:
-    SSH_HOST: my.brandlight.org
-    SSH_USER: www-data
-    SSH_PATH: /home/waves/webapps/waves
   script:
     - ssh www-data@my.brandlight.org "cd /home/yellowtent/appsdata/2ba0c446-0782-4fc9-bdb5-6941afe37943/data/public && git checkout master && git pull origin master && exit"
 

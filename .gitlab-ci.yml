@@ -14,7 +14,7 @@ stage_deploy:
       - build/
   environment:
     name: cloudron-production-i18n
-    url: https://i18n2.brandlight.org
+    url: https://i18n.brandlight.org
   only:
     - master
   script:

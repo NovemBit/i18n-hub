@@ -2,29 +2,19 @@
 #   #- build
 #   - deploy
 
-image: tetraweb/php
+image: registry.gitlab.com/agentdesign/sysadmin/docker/docker-agentdesign-wordpress-ci
 
 before_script:
   - mkdir ~/.ssh
-  - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-  - apt-get update
-  - apt-get install software-properties-common -y
-  - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-  - apt-get update
-  - apt-get install zip unzip vault -y
+  
+  
   #- apk -q --no-progress add vault
   - vault write -field=token auth/approle/login role_id=$VAULT_ROLE_ID secret_id=$VAULT_SECRET_ID >~/.vault-token
   - vault kv get -field=id_rsa cisecrets/ssh | base64 -d >~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa
   - vault kv get -field=id_rsa.pub cisecrets/ssh | base64 -d >~/.ssh/id_rsa.pub
   - vault kv get -field=known_hosts cisecrets/ssh | base64 -d >~/.ssh/known_hosts
  
-  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  - php composer-setup.php
-  - php -r "unlink('composer-setup.php');"
-  - php composer.phar install
-  - npm install
-  - npm run deploy
-  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  
   # - mkdir -p ~/.ssh
   # - eval $(ssh-agent -s)
   # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'

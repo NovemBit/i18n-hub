@@ -46,7 +46,6 @@ before_script:
 #     - vault kv get -field=kubeconfig cisecrets/kubeconfig-wpcluster2 | base64 -d >/tmp/kubeconfig
 #     - kubectl --kubeconfig=/tmp/kubeconfig -n i18n set image deployment i18n i18n=$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
-
 stage_deploy:
   artifacts:
     paths:
